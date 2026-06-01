@@ -1,0 +1,126 @@
+# BlogGenerator
+
+BlogGenerator is a mock-first blog drafting tool for building SEO and GEO-aware article workflows. The open-source version is designed to run locally without login, cloud services, or AI keys. Production AI, Firebase Auth, Firestore history, and Vercel deployment are optional.
+
+## Quick Start
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Open the local URL printed by Vite. By default, `VITE_ENABLE_CLIENT_MOCK=true`, so the app can generate sample ideas, outlines, articles, GEO reports, and SEO metadata without calling an external model.
+
+## Environment
+
+The safe default is:
+
+```env
+AI_PROVIDER=mock
+ENABLE_AI_MOCK=true
+VITE_ENABLE_CLIENT_MOCK=true
+VITE_ENABLE_AUTH=false
+```
+
+Use real AI only from the server-side API route. Variables without the `VITE_` prefix are server-only and must be stored in local `.env.local` files or deployment secrets, never committed to GitHub.
+
+Supported provider settings:
+
+```env
+AI_PROVIDER=mock
+ENABLE_AI_MOCK=true
+
+# Optional server-only providers
+AI_GATEWAY_API_KEY=
+AI_GATEWAY_MODEL=
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+For production deployments with a real provider, keep authentication enabled or explicitly set:
+
+```env
+ALLOW_PUBLIC_GENERATION=true
+```
+
+Only use that flag if you intentionally want unauthenticated public generation. Otherwise, a public site could spend your AI quota.
+
+## Optional Auth And History
+
+Local demo mode does not require login. To enable Firebase Auth and Firestore history:
+
+```env
+VITE_ENABLE_AUTH=true
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_ALLOWED_EMAIL_DOMAINS=
+AUTH_REQUIRED=true
+```
+
+`VITE_ALLOWED_EMAIL_DOMAINS` is optional. If empty, any signed-in Google account is allowed. If set, use a comma-separated list such as `example.com,agency.dev`.
+
+If you set `AUTH_REQUIRED=true` for the server API route, install Firebase Admin in your own deployment branch:
+
+```bash
+npm install firebase-admin
+```
+
+Then provide Firebase Admin credentials through server-side deployment secrets.
+
+## GEO Prompt Setup
+
+BlogGenerator treats GEO as part of the drafting workflow, not as an afterthought. The generation prompts ask the model to produce useful article content and then evaluate whether the draft is easy for answer engines and AI search systems to understand, cite, and summarize.
+
+The GEO report prompt uses four layers:
+
+- `Coverage`: whether the draft answers the main topic, adjacent questions, definitions, use cases, and buyer or reader concerns.
+- `Citation`: whether claims are specific, attributable, and supported by authoritative references instead of vague assertions.
+- `Behavior`: whether the structure helps AI systems extract concise answers, compare options, and reuse passages safely.
+- `Business`: whether the article connects search intent to a clear next step without forcing promotional language.
+
+The prompt also asks the model to separate observed evidence from inferred evidence. Observed evidence comes directly from the draft. Inferred evidence is a reasoned estimate about how the content may perform in AI-generated answers. This separation keeps the report honest and avoids pretending that the model has live ranking or citation data.
+
+Article prompts enforce:
+
+- Markdown output with one `#` title and clear `##` / `###` sections.
+- Natural keyword coverage without keyword stuffing.
+- FAQ coverage for answer extraction.
+- Authority-link suggestions only when relevant.
+- `[IMAGE PLACEHOLDER]` markers for users who want to add their own media.
+- No hidden chain-of-thought, internal notes, or private context in the final article.
+
+Segment generation follows the same rules so long articles can be generated section by section while preserving consistent style and GEO evaluation criteria.
+
+## Vercel Deployment
+
+1. Create a new Vercel project from your GitHub repository.
+2. Add only the environment variables you need.
+3. Keep `AI_PROVIDER=mock` until you confirm deployment works.
+4. When enabling real AI, set the provider key as a server-side environment variable.
+5. If the site is public and auth is disabled, leave `ALLOW_PUBLIC_GENERATION=false`.
+
+## Privacy And Security
+
+- Do not commit `.env`, `.env.local`, `.vercel`, `.playwright-mcp`, Firebase service-account JSON, logs, screenshots, or generated artifacts.
+- Do not place AI provider keys or Firebase Admin keys in client-side code.
+- Only variables with the `VITE_` prefix are exposed to the browser.
+- Server-only keys such as AI provider keys and Firebase Admin credentials must live in deployment secrets.
+- The repository intentionally excludes brand images, favicon assets, login artwork, private domains, migration data, and local automation logs.
+
+## Scripts
+
+```bash
+npm run dev
+npm run lint
+npm run build
+npm run preview
+```
+
+## License
+
+MIT

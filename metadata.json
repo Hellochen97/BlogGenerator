@@ -1,0 +1,5 @@
+{
+  "name": "BlogGenerator",
+  "description": "A privacy-conscious AI blog generator with mock-first local setup and configurable GEO prompt evaluation.",
+  "requestFramePermissions": []
+}
