@@ -46,9 +46,49 @@ select {
   line-height: 1.7;
 }
 
+.markdown-body p {
+  margin: 0.75rem 0;
+}
+
 .markdown-body ul,
 .markdown-body ol {
+  margin: 0.75rem 0;
   padding-left: 1.5rem;
+}
+
+.markdown-body ul {
+  list-style: disc;
+}
+
+.markdown-body ol {
+  list-style: decimal;
+}
+
+.markdown-body code {
+  border-radius: 0.25rem;
+  background: #f1f5f9;
+  padding: 0.1rem 0.25rem;
+  font-size: 0.925em;
+}
+
+.markdown-body pre {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1rem;
+}
+
+.markdown-body pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.markdown-body blockquote {
+  margin: 1rem 0;
+  border-left: 4px solid #fdb927;
+  padding-left: 1rem;
+  color: #475569;
 }
 
 .markdown-body a {
