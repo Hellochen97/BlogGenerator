@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hellochen97/BlogGenerator.git"
+    "url": "https://github.com/Hellochen97/SEO-GEO-Blog-Generator.git"
   },
   "scripts": {
     "dev": "vite",
